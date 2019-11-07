@@ -13,7 +13,7 @@ import org.mockito.Mockito.`when`
 import org.mockito.Mockito.verify
 import org.mockito.MockitoAnnotations
 import org.mockito.internal.util.MockUtil
-import java.lang.IllegalArgumentException
+import retrofit2.Response
 
 internal class UserRepositoryTest {
     @Mock
@@ -45,12 +45,13 @@ internal class UserRepositoryTest {
         // given
         val exception = IllegalArgumentException()
         `when`(networkUtil.getLoginToken("user", "pass")).thenReturn("user:pass")
-        `when`(loginService.loginAsync("user:pass")).thenThrow(exception)
+        `when`(loginService.loginAsync("user:pass") ).thenThrow(exception)
 
         // when
         userRepository.loginUser1("user", "pass")
 
-        // then
+        // thez
+        verify(networkUtil).getLoginToken("user", "pass")
         verify(networkUtil).exception(exception)
         Unit
     }
@@ -67,7 +68,66 @@ internal class UserRepositoryTest {
         userRepository.loginUser2("user", "pass")
 
         // then
+        verify(networkUtil).getLoginToken("user", "pass")
         verify(networkUtil).exception(exception)
         Unit
+    }
+
+    @Test
+    fun testLogin2_withStub(): Unit = runBlocking {
+
+        var success = false
+        var exception = false
+        userRepository = UserRepository(object : NetworkUtil() {
+            override fun success(response: Response<String>) : String {
+                success = true
+                return super.success(response)
+            }
+            override fun exception(ex: Exception) : String {
+                exception = true
+                return super.exception(ex)
+            }
+        } , loginService)
+
+        // given
+        val fake = IllegalArgumentException()
+        `when`(loginService.loginAsync("user:pass")).thenThrow(fake)
+
+        // when
+        userRepository.loginUser2("user", "pass")
+
+        // then
+        assertTrue(exception)
+        Unit
+
+    }
+
+    @Test
+    fun testLogin1_withStub(): Unit = runBlocking {
+
+        var success = false
+        var exception = false
+        userRepository = UserRepository(object : NetworkUtil() {
+            override fun success(response: Response<String>) : String {
+                success = true
+                return super.success(response)
+            }
+            override fun exception(ex: Exception) : String {
+                exception = true
+                return super.exception(ex)
+            }
+        } , loginService)
+
+        // given
+        val fake = IllegalArgumentException()
+        `when`(loginService.loginAsync("user:pass")).thenThrow(fake)
+
+        // when
+        userRepository.loginUser1("user", "pass")
+
+        // then
+        assertTrue(exception)
+        Unit
+
     }
 }

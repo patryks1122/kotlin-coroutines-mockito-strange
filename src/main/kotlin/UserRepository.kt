@@ -10,22 +10,22 @@ class UserRepository(
         val loginToken = networkUtil.getLoginToken(login, password)
         return try {
             val response = withContext(Dispatchers.IO) {
-                loginService.loginAsync(loginToken)
+                val response = loginService.loginAsync(loginToken)
+                response
             }
             networkUtil.success(response)
         } catch (ex: Exception) {
-            networkUtil.exception(ex)
+            return networkUtil.exception(ex)
         }
     }
 
     suspend fun loginUser2(login: String, password: String) : String {
         val loginToken = networkUtil.getLoginToken(login, password)
-
         return try {
             val response = loginService.loginAsync(loginToken)
             networkUtil.success(response)
         } catch (ex: Exception) {
-            networkUtil.exception(ex)
+            return networkUtil.exception(ex)
         }
     }
 }
