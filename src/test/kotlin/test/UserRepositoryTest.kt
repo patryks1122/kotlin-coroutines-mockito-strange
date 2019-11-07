@@ -9,9 +9,10 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mock
-import org.mockito.Mockito.`when`
+import org.mockito.Mockito.mock
+import org.mockito.Mockito.withSettings
 import org.mockito.Mockito.verify
-import org.mockito.MockitoAnnotations
+import org.mockito.Mockito.`when`
 import org.mockito.internal.util.MockUtil
 import retrofit2.Response
 
