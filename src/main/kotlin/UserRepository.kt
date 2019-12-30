@@ -7,7 +7,7 @@ class UserRepository(
     val loginService: LoginService
 ) {
     suspend fun loginUser1(login: String, password: String) : String {
-        val loginToken = networkUtil.getLoginToken(login, password)
+        val loginToken = "$login:$password"
         return try {
             val response = withContext(Dispatchers.IO) {
                 val response = loginService.loginAsync(loginToken)
@@ -20,7 +20,7 @@ class UserRepository(
     }
 
     suspend fun loginUser2(login: String, password: String) : String {
-        val loginToken = networkUtil.getLoginToken(login, password)
+        val loginToken = "$login:$password"
         return try {
             val response = loginService.loginAsync(loginToken)
             networkUtil.success(response)
